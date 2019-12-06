@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Weather</title>
+<!-- Don't forget to link to jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+	input{
+		margin: 10px 0px;
+		padding: 5px;
+	}
+	#forecast{
+		/*This div should not appear until the weather is returned.*/
+		display:none;
+		text-align: center;
+	}
+	#forecast div{
+		width: 25vw;
+		border: 8px solid blue;
+		margin: 0 auto;
+		background: black;
+	}
+	img{
+		width:100%;
+	}
+</style>
+<script>
+    function gettingJSON(){
+    	console.log("Hi")
+    	// Use the OpenWeather API to return:
+    	//  the current temperature 
+    	//  the high temperature for the day
+    	//  the low temperature for the day
+    	//  the icon for the current weather
+		//Get location from text input
+		var location = $("#location").val()
+		if(location == ""){
+			location = "Ann Arbor"
+		}
+	
+		var degrees = "imperial"
+		if($("#fahrenheit").is(':checked')){
+			degrees = "imperial"
+		}
+		else if($("#celcius").is(':checked')){
+			degrees = "metric"
+		}
+		
+		var YourWeatherAppID = "b28015cdcc239d57b5f5e874b8566e3a"
+		let query = "https://api.openweathermap.org/data/2.5/weather?q="+location+ "&units="+ degrees + "&APPID=" +YourWeatherAppID;
+    	console.log("Query is :" + query)
+
+        $.getJSON(query, function(json){
+            console.log(JSON.stringify(json));
+            let url = "https://openweathermap.org/img/w/" + json.weather[0].icon + ".png";
+            $('#forecast').show();
+            $('#tempImg').attr('src', url);
+            $('#tempImg').attr('alt', json.weather[0].description);
+            $('#loc').text(json.name);
+            $('#temp').text(json.main.temp);
+            $('#high').text(json.main.temp_max);
+            $('#low').text(json.main.temp_min);
+        });
+    };
+    </script>
+</head>
+<body>
+	<!-- DO NOT CHANGE ANY CODE IN THE BODY OF THIS FILE. -->
+	<label for ="location">City:</label><input type = "text" id = "location"><br>
+	<input type = "radio" name = "temp" value = "imperial" id = "fahrenheit"> <label for = "fahrenheit">Fahrenheit</label><br>
+	<input type = "radio" name = "temp" value = "metric" id = "celcius"> <label for = "celcius">Celcius</label><br>
+
+	<button id = "getIt" onclick = " gettingJSON()">Get Weather</button>
+
+
+	<div id = "forecast">
+		<div>
+		<img id = "tempImg" src="" alt = "" title = "">
+		</div>
+		<p>The temperature in <span id = "loc"></span> is currently <span id = "temp"></span>.</p>
+		<p>The high today will be <span id = "high"></span> and the low will be <span id = "low"></span>.</p>
+		
+	</div>
+</body>
+</html>
